@@ -5,6 +5,7 @@ import sys, os
 import argparse
 
 
+
 class _ledArray():
     """Base Class for a single LED data stream."""
     def __init__(self,layer,color_mode='BW'):
@@ -32,6 +33,12 @@ class _ledArray():
         oldMean = self.outputArray[index]
         self.outputArray[index] = oldMean + (value-oldMean)/count
 
+verbose = False;
+
+def vprint(statement):
+    if (verbose):
+        print statement
+
 
 def parser_init():
     parser = argparse.ArgumentParser(
@@ -39,27 +46,30 @@ def parser_init():
     parser.add_argument("-m", "--mask",nargs=1,required=True,  help="Photoshop file of the LED positions.")
     parser.add_argument("-e", "--effect",nargs=1,required=True, help="Photo of the effect to overlay on to the LEDS. This should be the same pixel size as the mask!")
     parser.add_argument("-o", "--output",nargs=1,  type=argparse.FileType('w'), default=sys.stdout, help="Photoshop file of the LED positions.")
+    parser.add_argument("-c", "--color_mode",nargs=1, default="RGB", help="Color mode of effect image (BW,RGB,RGBW,1) ")    
+    parser.add_argument("-v", "--verbose",nargs=1, action='store_true', help="Increase verbosity of ouput")    
+
     return parser;
 def main():
+    #build parser options
     parser = parser_init();
-    #parser_init()
     args = parser.parse_args()
-    #mask = args.mask
-    #overlay = args.overlay
+    global verbose
+    verbose = args.verbose;
     mask = args.mask[0]
-
-    overlay = Image.open(args.effect[0])
+    color_mode = args.color_mode[0]
+    #open image and convert to given color mode
+    overlay = Image.open(args.effect[0]).convert(color_mode)
     
-    overlay = overlay.convert("LA");
-
+    #open photoshop image and convert to PIL.
     maskPSD = PSDImage.load(mask)
     maskPIL = maskPSD.as_PIL();
     maskPIL = maskPIL.convert("1");
-
     maskMeta = maskPSD.header
     # check if the dimesions of the mask and the overlay are the same
     if ((maskMeta.width != overlay.width) and (maskMeta.height != overlay.height)):
         raise("incorrect Size");
+    
     print maskPSD.layers
 
 

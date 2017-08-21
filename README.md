@@ -1,7 +1,7 @@
 # LED Display Controller
 
 
-Dillinger is a command-line tool to generate output arrays for addressable leds built on non-standard layout (e.g. custom PCB layouts or just arranged strips)
+LED Display is a command-line tool to generate output arrays for addressable leds built on non-standard layout (e.g. custom PCB layouts or just arranged strips)
 
 # How to:
 
