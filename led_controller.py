@@ -44,9 +44,9 @@ def parser_init():
     parser = argparse.ArgumentParser(
             description = 'arguments to output LED array');
     parser.add_argument("-m", "--mask",nargs=1,required=True,  help="Photoshop file of the LED positions.")
-    parser.add_argument("-e", "--effect",nargs=1,required=True, help="Photo of the effect to overlay on to the LEDS. This should be the same pixel size as the mask!")
+    parser.add_argument("-i", "--input",nargs=1,required=True, help="Photo (or Folder) of the input to overlay on to the LEDS. This should be the same pixel size as the mask!")
     parser.add_argument("-o", "--output",nargs=1,  type=argparse.FileType('w'), default=sys.stdout, help="Photoshop file of the LED positions.")
-    parser.add_argument("-c", "--color_mode",nargs=1, default="RGB", help="Color mode of effect image (BW,RGB,RGBW,1) ")    
+    parser.add_argument("-c", "--color_mode",nargs=1, default="RGB", help="Color mode of input image (LA,RGB,RGBW,1) ")    
     parser.add_argument("-v", "--verbose",nargs=1, action='store_true', help="Increase verbosity of ouput")    
 
     return parser;
@@ -59,8 +59,14 @@ def main():
     mask = args.mask[0]
     color_mode = args.color_mode[0]
     #open image and convert to given color mode
-    overlay = Image.open(args.effect[0]).convert(color_mode)
-    
+    if os.path.isfile(args.input[0]):
+        vprint("Single Image to process")
+        overlay = Image.open(args.input[0]).convert(color_mode)
+    elif os.path.isdir(args.input[0]):
+        vprint("Using folder: " + args.input[0])
+        print "not implemented yet sorry"
+
+
     #open photoshop image and convert to PIL.
     maskPSD = PSDImage.load(mask)
     maskPIL = maskPSD.as_PIL();
@@ -73,7 +79,7 @@ def main():
     print maskPSD.layers
 
 
-    maskLayers = [ _ledArray(layer,) for layer in maskPSD.layers ]
+    maskLayers = [ _ledArray(layer) for layer in maskPSD.layers ]
     if (1):
         print "Found " + str(len(maskLayers)) + " LED data lines"
         print "These are the following layers:"
