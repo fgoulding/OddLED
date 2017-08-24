@@ -1,5 +1,5 @@
 # OddLED
-![](./media/output.png =400x)
+<img src="media/output.png" width="200">
 
 OddLed is a command-line tool to generate output arrays for addressable leds for non-standard LED layout (e.g. custom PCB layouts or just arranged strips)
 
@@ -43,13 +43,15 @@ pip install PSD_tools
 # How to:
 - First, you need to make the LED mask, each LED data line (driven by a different IO pin) should be a seperate layer and the LEDs should be paced in order of the actual LEDS. In the example below, I am adding a gradient across two diagonal rows of LEDS:
 This is the LED layout:
-![](./media/sample_mask.png =250x)
+<img src="media/sample_mask.png" width="200">
+
 All of the LEDs are on the same Data line thus they are all in a single group called "test". Inside the group are the leds, as simple rectangle objects. The rectangles are ordered in order of the physical LEDs.  
 ![](./media/sample_layers.png =250x)
 The mask should be saved as a PSD file as it stores all the layers. 
 
 - Next create your effect to overlay. This is whatever you want to show on the LEDS. For the example, I created a gradient that fades outward
-![](./media/sample_effect.png =250x)
+<!-- ![](./media/sample_effect.png =250x) -->
+<img src="media/sample_effect.png" width="200">
 
 - The commandline tool takes an input mask (as a PSD file, where each led is a seperate layer). An effect image of the same size, and an ouput file (default is stdout)
 ```
