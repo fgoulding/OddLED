@@ -1,5 +1,5 @@
 # OddLED
-![](https://github.com/tylerGoulding/LED_display_controller/media/output.png)
+![](https://github.com/tylerGoulding/LED_display_controller/tree/master/media/output.png)
 
 OddLed is a command-line tool to generate output arrays for addressable leds for non-standard LED layout (e.g. custom PCB layouts or just arranged strips)
 
@@ -36,9 +36,9 @@ pip install PSD_tools
 # How to:
 - First, you need to make the LED mask, each LED data line (driven by a different IO pin) should be a seperate layer and the LEDs should be paced in order of the actual LEDS. In the example below, I am adding a gradient across two diagonal rows of LEDS:
 This is the LED layout:
-![LED Layout](https://github.com/tylerGoulding/LED_display_controller/media/output.png)
+![](https://github.com/tylerGoulding/LED_display_controller/tree/master/media/output.png)
 All of the LEDs are on the same Data line thus they are all in a single group called "test". Inside the group are the leds, as simple rectangle objects. The rectangles are ordered in order of the data in the actual LEDs.  
-![alt text](https://github.com/tylerGoulding/LED_display_controller/media/sample_layers.png)
+![](https://github.com/tylerGoulding/LED_display_controller/tree/master/media/sample_layers.png)
 sample_layers
   - The commandline tool takes an input mask (as a PSD file, where each led is a seperate layer). An effect image of the same size, and an ouput file (default is stdout)
 Usage:
