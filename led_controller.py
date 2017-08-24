@@ -27,7 +27,9 @@ class _ledArray():
         del outputArray[-1]
         outputArray.append("}");
         outputString = ''.join([a for a in outputArray])
+        print ""
         print outputString
+        print ""
     def updateAverage(self,index,value):
         if (self.color_mode == "RGB"):
             count = self.outputCount[index] = self.outputCount[index] + 1;
@@ -49,13 +51,13 @@ def vprint(statement):
 
 def parser_init():
     parser = argparse.ArgumentParser(
-            description = 'arguments to output LED array');
+            description = 'Creates bitmaps using Photoshop files of LED layouts for unconventional led layouts.');
     parser.add_argument("-m", "--mask",nargs=1,required=True,  help="Photoshop file of the LED positions.")
     parser.add_argument("-i", "--input",nargs=1,required=True, help="Photo (or Folder) of the input to overlay on to the LEDS. This should be the same pixel size as the mask!")
-    parser.add_argument("-o", "--output",nargs=1,  type=argparse.FileType('w'), default=sys.stdout, help="Photoshop file of the LED positions.")
-    parser.add_argument("-c", "--color_mode",nargs="?", default="RGB", help="Color mode of input image: (L,RGB,1)")    
+    # parser.add_argument("-o", "--output",nargs=1,  type=argparse.FileType('w'), default=sys.stdout, help="Photoshop file of the LED positions.")
+    parser.add_argument("-c", "--color_mode",nargs="?", default="RGB", help="Color mode of input image: (L,RGB)")    
     parser.add_argument("-v", "--verbose", action='store_true', help="Increase verbosity of ouput")    
-    parser.add_argument("--labelled", action='store_true', help="Only use this if you have individually labelled all the layers of the leds in your image, otherwise, it is assumed that the LED are placed in order")    
+    # parser.add_argument("--labelled", action='store_true', help="Only use this if you have individually labelled all the layers of the leds in your image, otherwise, it is assumed that the LED are placed in order")    
 
     return parser;
 def main():
@@ -71,11 +73,12 @@ def main():
 
     #open image and convert to given color mode
     if (os.path.isfile(args.input[0])):
-        vprint("Single Image to process")
+        vprint("Input File: " + args.input[0])
         files = [args.input[0]]
     elif os.path.isdir(args.input[0]):
         vprint("Using folder: " + args.input[0])
         files = os.listdir(args.input[0])
+        files = [args.input[0] +"/"+ f for f in files]
     #open photoshop image
     maskPSD = PSDImage.load(mask)
     maskPIL = maskPSD.as_PIL();
@@ -95,6 +98,8 @@ def main():
         vprint("These are the following layers:")
         for layer in maskLayers:
             vprint("   " + layer.name)
+        print ""
+        print ""
 
         # this is the meat of the function
         for ledArray in maskLayers:
@@ -115,7 +120,7 @@ def main():
                             intensity = overlay.getpixel((x,y))
                             ledArray.updateAverage(index,intensity);
             name = os.path.splitext(file)[0];
-            
+            name = os.path.basename(name)
             ledArray.generateOutput(name)
 
 
