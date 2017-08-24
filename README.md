@@ -46,7 +46,9 @@ This is the LED layout:
 <img src="media/sample_mask.png" width="200">
 
 All of the LEDs are on the same Data line thus they are all in a single group called "test". Inside the group are the leds, as simple rectangle objects. The rectangles are ordered in order of the physical LEDs.  
-![](./media/sample_layers.png =250x)
+<img src="media/sample_layers.png" width="200">
+
+<!-- ![](./media/sample_layers.png =250x) -->
 The mask should be saved as a PSD file as it stores all the layers. 
 
 - Next create your effect to overlay. This is whatever you want to show on the LEDS. For the example, I created a gradient that fades outward
