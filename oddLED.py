@@ -7,7 +7,7 @@ import argparse
 
 class _ledArray():
     """Base Class for a single LED data stream."""
-    def __init__(self,layer,color_mode='BW'):
+    def __init__(self,layer,color_mode='L'):
         self.color_mode = color_mode
         self.psd_layer = layer;
         self.name = layer.name;
@@ -19,14 +19,24 @@ class _ledArray():
         else:
             self.outputArray = [0 for i in xrange(self.numLEDS)]
     def generateOutput(self,effect):
-        outputString = "const uint8_t " + self.name + "_" + effect+"[] =  {"
-        outputArray = [outputString]
-        for byte in self.outputArray:
-            outputArray.append(str(byte));
-            outputArray.append(", ");
-        del outputArray[-1]
-        outputArray.append("}");
-        outputString = ''.join([a for a in outputArray])
+        if self.color_mode == 'RGB':
+            outputString = "const uint8_t " + self.name + "_" + effect+"["+ str(self.numLEDS) +"][3] =  {"
+            outputArray = [outputString]
+            for byte in self.outputArray:
+                outputArray.append("{"+str(byte)[1:-1]+"}");
+                outputArray.append(", ");
+            del outputArray[-1]
+            outputArray.append("}");
+            outputString = ''.join([a for a in outputArray])
+        else:
+            outputString = "const uint8_t " + self.name + "_" + effect+"["+ str(self.numLEDS) +"] =  {"
+            outputArray = [outputString]
+            for byte in self.outputArray:
+                outputArray.append(str(byte));
+                outputArray.append(", ");
+            del outputArray[-1]
+            outputArray.append("}");
+            outputString = ''.join([a for a in outputArray])
         print ""
         print outputString
         print ""
@@ -51,7 +61,7 @@ def vprint(statement):
 
 def parser_init():
     parser = argparse.ArgumentParser(
-            description = 'Creates bitmaps using Photoshop files of LED layouts for unconventional led layouts.');
+            description = 'Creates bitmaps using Photoshop files of LED layouts for unconventional led layouts.\n Currently Supports RGB and Greyscale(L)');
     parser.add_argument("-m", "--mask",nargs=1,required=True,  help="Photoshop file of the LED positions.")
     parser.add_argument("-i", "--input",nargs=1,required=True, help="Photo (or Folder) of the input to overlay on to the LEDS. This should be the same pixel size as the mask!")
     # parser.add_argument("-o", "--output",nargs=1,  type=argparse.FileType('w'), default=sys.stdout, help="Photoshop file of the LED positions.")
@@ -69,7 +79,6 @@ def main():
     verbose = args.verbose;
     mask = args.mask[0]
     color_mode = args.color_mode
-    vprint("Input File: " + args.input[0])
 
     #open image and convert to given color mode
     if (os.path.isfile(args.input[0])):
@@ -98,7 +107,6 @@ def main():
         vprint("These are the following layers:")
         for layer in maskLayers:
             vprint("   " + layer.name)
-        print ""
         print ""
 
         # this is the meat of the function
