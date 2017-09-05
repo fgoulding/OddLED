@@ -7,7 +7,7 @@ import argparse
 
 class _ledArray():
     """Base Class for a single LED data stream."""
-    def __init__(self,layer,outfile,color_mode='L'):
+    def __init__(self,layer,color_mode='L'):
         self.color_mode = color_mode
         self.psd_layer = layer;
         self.name = layer.name;
@@ -37,11 +37,9 @@ class _ledArray():
             del outputArray[-1]
             outputArray.append("}");
             outputString = ''.join([a for a in outputArray])
-        outfile.write("\n");
-        outfile.write(outputString)
-        # print ""
-        # print outputString
-        # print ""
+        print ""
+        print outputString
+        print ""
     def updateAverage(self,index,value):
         if (self.color_mode == "RGB"):
             count = self.outputCount[index] = self.outputCount[index] + 1;
@@ -55,7 +53,6 @@ class _ledArray():
             self.outputArray[index] = oldMean + (value-oldMean)/count            
 
 verbose = False;
-outfile = None;
 
 def vprint(statement):
     if (verbose):
@@ -67,7 +64,7 @@ def parser_init():
             description = 'Creates bitmaps using Photoshop files of LED layouts for unconventional led layouts.\n Currently Supports RGB and Greyscale(L)');
     parser.add_argument("-m", "--mask",nargs=1,required=True,  help="Photoshop file of the LED positions.")
     parser.add_argument("-i", "--input",nargs=1,required=True, help="Photo (or Folder) of the input to overlay on to the LEDS. This should be the same pixel size as the mask!")
-    parser.add_argument("-o", "--output",nargs=1,  type=argparse.FileType('w+'), default=sys.stdout, help="Photoshop file of the LED positions.")
+    # parser.add_argument("-o", "--output",nargs=1,  type=argparse.FileType('w'), default=sys.stdout, help="Photoshop file of the LED positions.")
     parser.add_argument("-c", "--color_mode",nargs="?", default="RGB", help="Color mode of input image: (L,RGB)")    
     parser.add_argument("-v", "--verbose", action='store_true', help="Increase verbosity of ouput")    
     # parser.add_argument("--labelled", action='store_true', help="Only use this if you have individually labelled all the layers of the leds in your image, otherwise, it is assumed that the LED are placed in order")    
@@ -78,13 +75,11 @@ def main():
     parser = parser_init();
 
     args = parser.parse_args()
-    print dir(args.output)
     global verbose
-    global outfile
-    outfile = args.output[0];
     verbose = args.verbose;
     mask = args.mask[0]
     color_mode = args.color_mode
+
     #open image and convert to given color mode
     if (os.path.isfile(args.input[0])):
         vprint("Input File: " + args.input[0])
@@ -93,8 +88,6 @@ def main():
         vprint("Using folder: " + args.input[0])
         files = os.listdir(args.input[0])
         files = [args.input[0] +"/"+ f for f in files]
-    else:
-        print "File not Found"
     #open photoshop image
     maskPSD = PSDImage.load(mask)
     maskPIL = maskPSD.as_PIL();
@@ -109,7 +102,7 @@ def main():
         if ((maskMeta.width != overlay.width) and (maskMeta.height != overlay.height)):
             raise("Incorrect Size - Please apply a effect input file that is the same size as the LED Mask")
 
-        maskLayers = [ _ledArray(layer,outfile,color_mode) for layer in maskPSD.layers ]
+        maskLayers = [ _ledArray(layer,color_mode) for layer in maskPSD.layers ]
         vprint("Found " + str(len(maskLayers)) + " LED data lines")
         vprint("These are the following layers:")
         for layer in maskLayers:
